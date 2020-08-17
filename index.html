@@ -25,16 +25,15 @@
 		</div>
 
 		<div id="menu">
-			How would you rate the level of impairment of the distorted content with respect to the reference? <br> <br>
-			<!-- <form action=""> -->
-			<input type="radio" id="r5" name="score" value="5" onclick="onSelecting()"> Imperceptible<br>
-			<input type="radio" id="r4" name="score" value="4" onclick="onSelecting()"> Perceptible, but not annoying<br>
-			<input type="radio" id="r3" name="score" value="3" onclick="onSelecting()"> Slightly annoying<br>
-			<input type="radio" id="r2" name="score" value="2" onclick="onSelecting()"> Annoying<br>
-			<input type="radio" id="r1" name="score" value="1" onclick="onSelecting()"> Very annoying <br> <br>
-			<!-- </form> -->
-			<button type="submit" id="button" onclick="onRating()">Submit</button>
+			Which model do you prefer? <br> <br>
 		</div>
+
+		<div id="buttons" align="center">
+			<button class="buttonLeft" type="submit" id="buttonLeft" value="-1" onclick="onRatingLeft()">A</button>
+			<button class="buttonMiddle" type="submit" id="buttonMiddle" value="0" onclick="onRatingMiddle()">Same</button>
+			<button class="buttonRight" type="submit" id="buttonRight" value="1" onclick="onRatingRight()">B</button>
+		</div>
+
 
 		<div id="progress">
 		  	<div id="bar"></div>
