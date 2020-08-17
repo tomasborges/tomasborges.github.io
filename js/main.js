@@ -467,7 +467,7 @@ function updateProgressBar( cur, len ){
 
 function storeRecordings( ){
 	var xhr = new XMLHttpRequest( );
-  xhr.open( "POST", 'http://localhost:8888/htdocs/pointCloudQualityAssessmentTestbed/php/storeData.php', true );
+  xhr.open( "POST", 'http://https://tomasborges.github.io/php/storeData.php', true );
   xhr.setRequestHeader( "Content-Type", "application/json;charset=UTF-8" );
 
  	// Constructor for object
