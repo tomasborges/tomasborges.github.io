@@ -23,10 +23,11 @@
 // VARIABLES
 // ===============================================================
 
-var CONFIG = './config/config001.json';
+var CONFIG = './config/config002.json';
 var models = [];
 var modelIndex = 0;
 var randView = true;
+var submitted = false;
 
 
 // ===============================================================
@@ -160,7 +161,7 @@ function setControls( ){
 
 function setModels( ){
 	// Disable submit button
-	document.getElementById( 'button' ).disabled = true;
+	// document.getElementById( 'button' ).disabled = true;
 
 	fileNameRef = models[ modelIndex ].reference.name;
 	isVoxelizedRef = models[ modelIndex ].reference.voxelized;
@@ -425,16 +426,38 @@ function onSelecting( ){
 	document.getElementById( 'button' ).disabled = false;
 }
 
+function onRatingLeft( ){
+
+	score = -1;
+	onRating( );
+}
+
+
+
+function onRatingMiddle( ){
+
+	score = 0;
+	onRating( );
+}
+
+
+
+function onRatingRight( ){
+
+	score = 1;
+	onRating( );
+}
+
 
 function onRating( ){
-	var scoreIDs = [ 'r1', 'r2', 'r3', 'r4', 'r5' ]
+	// var scoreIDs = [ 'r1', 'r2', 'r3', 'r4', 'r5' ]
 
-	for ( var i = 0; i < scoreIDs.length; i++ ){
-		if ( document.getElementById( scoreIDs[ i ] ).checked ) {
-  		score = document.getElementById( scoreIDs[ i ] ).value;
-  		document.getElementById( scoreIDs[ i ] ).checked = false;
-		}
-	}
+	// for ( var i = 0; i < scoreIDs.length; i++ ){
+	// 	if ( document.getElementById( scoreIDs[ i ] ).checked ) {
+  	// 	score = document.getElementById( scoreIDs[ i ] ).value;
+  	// 	document.getElementById( scoreIDs[ i ] ).checked = false;
+	// 	}
+	// }
 
 	if ( logInteractionData ){
 		updateLogInteractionData( );
@@ -447,6 +470,8 @@ function onRating( ){
 	modelIndex++;
 
 	updateProgressBar( modelIndex, modelNum );
+
+	document.getElementById( 'button' ).checked = false;
 
 	if (modelIndex < modelNum){
 		controls.removeEventListener( 'change', onPositionChange );
@@ -467,7 +492,7 @@ function updateProgressBar( cur, len ){
 
 function storeRecordings( ){
 	var xhr = new XMLHttpRequest( );
-  xhr.open( "POST", 'https://https://tomasborges.github.io/php/storeData.php', true );
+  xhr.open( "POST", 'https://tomasborges.github.io/php/storeData.php', true );
   xhr.setRequestHeader( "Content-Type", "application/json;charset=UTF-8" );
 
  	// Constructor for object
@@ -528,7 +553,9 @@ function closeSession( ){
 // ---------------------------------------------------------------
 // Document Ready
 // ---------------------------------------------------------------
-window.onload = ( function( ) {
+function loadMain( ) {
+// window.onload = ( function( ) {
+	// alert( window.currentTab );
 	// Check availability of WebGL
 	if ( THREE.REVISION == '110' ){
 		if ( THREE.WEBGL.isWebGLAvailable( ) === false ){
@@ -550,8 +577,10 @@ window.onload = ( function( ) {
 
 		sceneColor = config.sceneColor;
 
-		rendererWidth = config.renderer.width;
-		rendererHeight = config.renderer.height;
+		// rendererWidth = config.renderer.width;
+		// rendererHeight = config.renderer.height;
+		rendererWidth = window.innerWidth * 0.435;
+		rendererHeight = rendererWidth;
 		aspectRatio = rendererWidth / rendererHeight;
 
 		cameraLeft = config.camera.left;
@@ -593,4 +622,5 @@ window.onload = ( function( ) {
 			getAspectRatioErrorMessage( );
 		}
 	});
-})( );
+// })( );
+}

@@ -1,7 +1,8 @@
 html, body {
 	font-family: sans-serif;
 	background-color: #C0C0C0;
-	margin: 0px;
+	overflow: scroll;
+	margin: 0;
 	overflow: hidden;
 }
 
@@ -15,6 +16,32 @@ html, body {
 	z-index: 100;
 	display:block;
 }
+
+/* Hide all steps by default: */
+.tab {
+	display: none;
+  }
+
+  /* Make circles that indicate the steps of the form: */
+.step {
+	height: 15px;
+	width: 15px;
+	margin: 0 2px;
+	background-color: #bbbbbb;
+	border: none;  
+	border-radius: 50%;
+	display: inline-block;
+	opacity: 0.5;
+  }
+  
+  .step.active {
+	opacity: 1;
+  }
+  
+  /* Mark the steps that are finished and valid: */
+  .step.finish {
+	background-color: #4CAF50;
+  }
 
 #progress {
 	position: fixed;
@@ -30,11 +57,14 @@ html, body {
 }
 
 .button {
-	background:#999;
-	position: relative;
-	color:#eee;
-	/*padding:0.2em 0.5em; */
-	cursor:pointer;
+	background-color:-internal-light-dark(#efefef, #4a4a4a);
+	border-color:-internal-light-dark(#767676, #c3c3c3);
+	/* position: relative; */
+	/* color:#eee; */
+	padding:0.2em 0.5em;
+	cursor: pointer;
+	margin: 10px 128px;
+	font-size: large;
 }
 
 .highlight { background:orange; color:#fff; }
@@ -44,4 +74,28 @@ span {
 	width: 60px;
 	float: left;
 	text-align: center;
+}
+
+.thanks{
+	font-size: 25px;
+	font: "Arial";
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#progress_end {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: #ddd;
+}
+
+#bar_end {
+	width: 100%;
+	height: 15px;
+	background-color: #4CAF50;
 }

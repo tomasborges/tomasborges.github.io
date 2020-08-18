@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<title>point cloud web renderer</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="css/style.css">
+	</head>
+
+	<body id="test_body">
+
+		<!-- divs definition -->
+		<div id="container"> </div>
+
+		<div class="text" align="center" >
+			<canvas id="textA"></canvas>
+			<canvas id="textB"></canvas>
+		</div>
+
+		<div id="renderer" align="center" >
+			<canvas id="canvasA"></canvas>
+			<canvas id="canvasB"></canvas>
+			<canvas style="display:none" id="canvasC"></canvas>
+		</div>
+
+		<script type="text/javascript">var submitted=false;</script>
+
+		<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {window.location='http://localhost:8888/thankyou.html';}"></iframe>
+
+
+		<form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeiutyhaO_k3eI7u8PRklus2KgpJw1dvRwIuI0UOLqNO8PdFQ/formResponse" method="POST" target="hidden_iframe" >
+			<!-- onsubmit="submitted=true;" -->
+			<div id="menu">
+				Which model do you prefer?<br> <br>
+				<!-- <form action=""> -->
+			</div>
+
+			<div id="buttons" align="center">
+				<button class="button" type="radio" name="entry.590586709" id="buttonLeft" value="Left" onclick="onRatingLeft()">A</button>
+				<button class="button" type="radio" name="entry.590586709" id="buttonMiddle" value="Same" onclick="onRatingMiddle()">Same</button>
+				<button class="button" type="radio" name="entry.590586709" id="buttonRight" value="Right" onclick="onRatingRight()">B</button>
+			</div>
+		
+				<!-- <div id="buttons" align="center">
+					<input type="submit" id="r5" name="score" value="5" onclick="onSelecting()"> A<br>
+					<input type="submit" id="r4" name="score" value="4" onclick="onSelecting()"> Same<br>
+					<input type="submit" id="r3" name="score" value="3" onclick="onSelecting()"> B<br>
+				</div> -->
+				<!-- </form> -->
+				<!--<button type="submit" id="button" onclick="onRating()">Submit</button> -->
+			</div>
+
+			<div id="progress">
+				<div id="bar"></div>
+			</div>
+	</form>
+		<!-- end divs definition -->
+
+
+		<!-- begin script loading -->
+		<!-- three.js revision 97 -->
+		<script src="./thirdParty/three.js-r97/three.js"></script>
+		<script src="./thirdParty/three.js-r97/PCDLoader.js"></script>
+		<script src="./thirdParty/three.js-r97/PLYLoader.js"></script>
+		<script src="./thirdParty/three.js-r97/OrthographicTrackballControls.js"></script>
+		<script src="./thirdParty/three.js-r97/WebGL.js"></script>
+		<script src="./thirdParty/three.js-r97/stats.min.js"></script>
+		<!-- three.js revision 110 -->
+		<!-- <script src="../thirdParty/three.js-r110/three.js"></script>
+		<script src="../thirdParty/three.js-r110/PCDLoader.js"></script>
+		<script src="../thirdParty/three.js-r110/PLYLoader.js"></script>
+		<script src="../thirdParty/three.js-r110/OrthographicTrackballControls.js"></script>
+		<script src="../thirdParty/three.js-r110/WebGL.js"></script>
+		<script src="../thirdParty/three.js-r110/stats.min.js"></script> -->
+
+		<script type="x-shader/x-vertex" id="vertexshader">
+			attribute float size;
+			varying vec3 vColor;
+			void main() {
+				vColor = color;
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				gl_PointSize = size * ( 1.0 );
+				gl_Position = projectionMatrix * mvPosition;
+			}
+		</script>
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			varying vec3 vColor;
+			void main() {
+				gl_FragColor = vec4( vColor, 1.0 );
+			}
+		</script>
+		<script src="./js/FileSaver.js"></script>
+		<script src="./js/ioUtils.js"></script>
+		<script src="./js/main.js"></script>
+		<!-- end script loading -->
+	</body>
+</html>
