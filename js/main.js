@@ -27,7 +27,13 @@ var CONFIG = './config/config002.json';
 var models = [];
 var modelIndex = 0;
 var randView = true;
-var submitted = false;
+// var submitted = false;
+var btnIDs = [ 'btnLeft', 'btnMid', 'btnRight' ];
+var btnFormNames = ["entry.590586709", "entry.458448786", "entry.1771053463"];
+// var btnFormNames = ["entry.458448786", "entry.458448786", "entry.458448786"];
+var storeBtn = new Array(btnFormNames.length);
+var currentTab = 0; // Current tab is set to be the first tab (0)
+var numTabs = 1 + btnFormNames.length;
 
 
 // ===============================================================
@@ -85,14 +91,16 @@ function initializeScene( ){
 	var ctxRef = textRef.getContext( "2d" );
 	ctxRef.font = "25px Arial";
 	ctxRef.textAlign = "center";
-	ctxRef.fillText( "Reference", rendererWidth / 2, 30 );
+	ctxRef.margin = "auto";
+	ctxRef.fillText( "A", rendererWidth / 2, 30 );
 
 	textDist.width = rendererWidth;
 	textDist.height = 30;
 	var ctxDist = textDist.getContext( "2d" );
 	ctxDist.font = "25px Arial";
 	ctxDist.textAlign = "center";
-	ctxDist.fillText( "Distorted", rendererWidth / 2, 30 );
+	ctxDist.margin = "auto";
+	ctxDist.fillText( "B", rendererWidth / 2, 30 );
 
 	// Set text for the end of the session
 	canvasExit.width = window.innerWidth;
@@ -126,8 +134,8 @@ function initializeScene( ){
 		canvas: canvasDist,
 		antialias: false
 	} );
-	rendererRef.setPixelRatio( window.devicePixelRatio );
-	rendererDist.setPixelRatio( window.devicePixelRatio );
+	rendererRef.setPixelRatio( 1 ); //window.devicePixelRatio
+	rendererDist.setPixelRatio( 1 ); //window.devicePixelRatio
 
 	// Add window event listeners
 	window.addEventListener( 'keypress', onKeyPress );
@@ -422,42 +430,52 @@ function onKeyPress( e ) {
 }
 
 
-function onSelecting( ){
-	document.getElementById( 'button' ).disabled = false;
+function onSelecting( n ){
+	
+	for ( var i = 0; i < btnIDs.length; i++ ){
+		document.getElementById( btnIDs[i] ).name = btnFormNames[n];
+	}
+	
 }
 
-function onRatingLeft( ){
+function onRating( n ){
+	//ultima tentativa: tentar criar tres botoes identicos aos que existiam antes (pra cada tab) e remover os existentes
+	for ( var i = 0; i < btnIDs.length; i++ ){
+		if ( document.getElementById( btnIDs[ i ] ).checked ) {
+			score = document.getElementById( btnIDs[ i ] ).value;
+			document.getElementById( btnIDs[ i ] ).checked = false;
+			//storeBtn[n] = document.getElementById( btnIDs[ i ] );
+			
 
-	score = -1;
-	onRating( );
-}
+		}
+		// if (n+1 == btnFormNames.length) document.getElementById( btnIDs[i] ).name = "butao";
+	}
+	//create new div for the new buttons
+	var newDiv = document.createElement("div");
+	newDiv.id = "Field_" + n.toString();
+	var form = document.getElementById("Gform");
+	form.appendChild(newDiv);
 
+	var values = [-1, 0, 1];
+	for ( var i = 0; i < btnIDs.length; i++ ){
+		var btn = document.createElement("input");
+		btn.name = btnFormNames[n];
+		btn.value = values[i];
+		btn.type = "radio";
+		if (values[i] == score) btn.checked = true;
+		else btn.checked = false;
+		btn.hidden = true;
 
+		// var label = document.createElement('label');
+		// label.htmlFor = 'q'+ i.toString();
+		// var description = document.createTextNode(btnIDs[i]);
+		// label.appendChild(description);
 
-function onRatingMiddle( ){
+		newDiv.appendChild(btn);
+		// newDiv.appendChild(label)
+	}
 
-	score = 0;
-	onRating( );
-}
-
-
-
-function onRatingRight( ){
-
-	score = 1;
-	onRating( );
-}
-
-
-function onRating( ){
-	// var scoreIDs = [ 'r1', 'r2', 'r3', 'r4', 'r5' ]
-
-	// for ( var i = 0; i < scoreIDs.length; i++ ){
-	// 	if ( document.getElementById( scoreIDs[ i ] ).checked ) {
-  	// 	score = document.getElementById( scoreIDs[ i ] ).value;
-  	// 	document.getElementById( scoreIDs[ i ] ).checked = false;
-	// 	}
-	// }
+	
 
 	if ( logInteractionData ){
 		updateLogInteractionData( );
@@ -470,8 +488,6 @@ function onRating( ){
 	modelIndex++;
 
 	updateProgressBar( modelIndex, modelNum );
-
-	document.getElementById( 'button' ).checked = false;
 
 	if (modelIndex < modelNum){
 		controls.removeEventListener( 'change', onPositionChange );
@@ -531,7 +547,7 @@ function storeRecordings( ){
 
 function closeSession( ){
 	sceneRef.remove( pointcloudRef );
-  sceneDist.remove( pointcloudDist );
+	sceneDist.remove( pointcloudDist );
 
 	var ctxRef = textRef.getContext( "2d" );
 	ctxRef.clearRect(0, 0, textRef.width, textRef.height)
@@ -546,17 +562,16 @@ function closeSession( ){
 	canvasDist.style.display = "none";
 	document.getElementById( "menu" ).style.display = "none";
 	canvasExit.style.display = "block";
+
+	// var btns = document.getElementById("buttons");
+	// btns.removeChild(btns.childNodes[1]);
+	// btns.removeChild(btns.childNodes[3]);
+	// btns.removeChild(btns.childNodes[5]);
+
+
 }
 
-
-
-// ---------------------------------------------------------------
-// Document Ready
-// ---------------------------------------------------------------
-function loadMain( ) {
-// window.onload = ( function( ) {
-	// alert( window.currentTab );
-	// Check availability of WebGL
+function loadRenderer( ) {
 	if ( THREE.REVISION == '110' ){
 		if ( THREE.WEBGL.isWebGLAvailable( ) === false ){
 			document.body.appendChild( THREE.WEBGL.getWebGLErrorMessage( ) );
@@ -579,8 +594,10 @@ function loadMain( ) {
 
 		// rendererWidth = config.renderer.width;
 		// rendererHeight = config.renderer.height;
-		rendererWidth = window.innerWidth * 0.435;
-		rendererHeight = rendererWidth;
+		//var L = Math.min(document.documentElement.clientWidth/2, document.documentElement.clientHeight - 200);
+		var L = Math.min((window.innerWidth-5)/2, window.innerHeight - 200);
+		rendererWidth = L;
+		rendererHeight = L;
 		aspectRatio = rendererWidth / rendererHeight;
 
 		cameraLeft = config.camera.left;
@@ -602,7 +619,7 @@ function loadMain( ) {
 		controlsStaticMoving = config.controls.staticMoving;
 		controlsDynamicDampingFactor = config.controls.dynamicDampingFactor;
 
-		showStats = config.io.showStats;
+		showStats = true; //config.io.showStats;
 		logInteractionData = config.io.logInteractionData; // Note that the software doesn't handle excessive recordings of interactivity information
 		logScores = config.io.logScores;
 
@@ -622,5 +639,149 @@ function loadMain( ) {
 			getAspectRatioErrorMessage( );
 		}
 	});
-// })( );
 }
+
+function showTab(n) {
+	// This function will display the specified tab of the form...
+	var x = document.getElementsByClassName("tab");
+	if (n <= 1){
+		x[n].style.display = "block";
+	}
+	else {
+		x[1].style.display = "block";
+	}
+	//... and fix the Previous/Next buttons:
+	// if (n == 0) {
+	// 	document.getElementById("prevBtn").style.display = "none";
+	// } else {
+	// 	document.getElementById("prevBtn").style.display = "inline";
+	// }
+	if (n == (numTabs - 1)) {
+		document.getElementById("nextBtn").innerHTML = "Submit";
+	} else {
+		document.getElementById("nextBtn").innerHTML = "Next";
+	}
+	//... and run a function that will display the correct step indicator:
+	// fixStepIndicator(n)
+
+	if (currentTab == 1){ 
+		loadRenderer( );
+	}
+}
+
+function nextPrev(n) {
+	// This function will figure out which tab to display
+	var x = document.getElementsByClassName("tab");
+	// Exit the function if any field in the current tab is invalid:
+	if (currentTab == 0) {
+		if (!validateForm()) {
+			return false;
+		}
+	
+		// Hide the current tab:
+		x[currentTab].style.display = "none";
+	}
+	if (currentTab >= 1){
+		var currentField = currentTab - 1; //discard the form tab 
+		onRating(currentField);
+	}
+	// Increase or decrease the current tab by 1:
+	currentTab = currentTab + n;
+	// if you have reached the end of the form...
+	if (currentTab >= numTabs) { //x.length
+		// ... the form gets submitted:
+		document.getElementById("Gform").submit();
+		return false;
+	}
+	// Otherwise, display the correct tab:
+	showTab(currentTab);
+
+}
+
+function validateForm() {
+	// This function deals with validation of the form fields
+	var x, y, i, valid = true;
+	x = document.getElementsByClassName("tab");
+	y = x[currentTab].getElementsByTagName("input");
+	// A loop that checks every input field in the current tab:
+	for (i = 0; i < y.length; i++) {
+		// If a field is empty...
+		if (y[i].value == "") {
+			// add an "invalid" class to the field:
+			y[i].className += " invalid";
+			// and set the current valid status to false
+			valid = false;
+		}
+	}
+	// If the valid status is true, mark the step as finished and valid:
+	// if (valid) {
+	// 	document.getElementsByClassName("step")[currentTab].className += " finish";
+	// }
+	return valid; // return the valid status
+}
+
+function fixStepIndicator(n) {
+	// This function removes the "active" class of all steps...
+	var i, x = document.getElementsByClassName("step");
+	for (i = 0; i < x.length; i++) {
+		x[i].className = x[i].className.replace(" active", "");
+	}
+	//... and adds the "active" class on the current step:
+	x[n].className += " active";
+}
+
+function onWindowResize ( ){
+	var L = Math.min((window.innerWidth-5)/2, window.innerHeight - 200);
+	rendererWidth = L;
+	rendererHeight = L;
+	canvasRef.width = rendererWidth;
+	canvasRef.height = rendererHeight;
+	canvasDist.width = rendererWidth;
+	canvasDist.height = rendererHeight;
+	pixelsPerPointRef = splatScalingFactorRef * rendererWidth * ( 1 / geomResolutionRef );
+	pixelsPerPointDist = splatScalingFactorDist * rendererWidth * ( 1 / geomResolutionDist );
+
+			  // Set annotations
+	// textRef = document.getElementById( 'textA' );
+	// textDist = document.getElementById( 'textB' );
+	textRef.width = rendererWidth;
+	// textRef.height = 30;
+	var ctxRef = textRef.getContext( "2d" );
+	ctxRef.font = "25px Arial";
+	ctxRef.textAlign = "center";
+	// ctxRef.margin = "auto";
+	ctxRef.fillText( "A", rendererWidth / 2, 30 );
+
+	textDist.width = rendererWidth;
+	// textDist.height = 30;
+	var ctxDist = textDist.getContext( "2d" );
+	ctxDist.font = "25px Arial";
+	ctxDist.textAlign = "center";
+	ctxDist.fillText( "B", rendererWidth / 2, 30 );
+
+	rendererRef.setSize(rendererWidth, rendererHeight);
+	rendererDist.setSize(rendererWidth, rendererHeight);
+	// setModels( );
+	
+	
+	camera.updateProjectionMatrix( );
+	onPositionChange( );
+
+	// controls.reset();
+	initializeCameraParameters();
+
+	
+	// animate();
+	controls = new THREE.OrthographicTrackballControls( camera );
+	setControls( );
+	controls.addEventListener( 'change', onPositionChange );
+	request = requestAnimationFrame( animate );
+}
+
+// ---------------------------------------------------------------
+// Document Ready
+// ---------------------------------------------------------------
+
+showTab(currentTab); // Display the current tab
+window.addEventListener('resize',onWindowResize);
+
